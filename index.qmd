@@ -1,0 +1,255 @@
+---
+title: 251 Midterm Exam
+author: Firstname Lastname
+date: '2024-03-07'
+execute:
+  error: false
+categories:
+- Exam
+- Week07
+---
+
+In this exam, you'll be using data collected about US polling places. The [Center for Public Integrity](https://publicintegrity.org/) assembled this data using open records requests and contact with state or county election officials. Full documentation is available on the [github repository for the data](https://github.com/PublicI/us-polling-places) - each state's details can be found in a README file for that state; there is also a machine-readable `manifest.yaml` file for each state provided.
+
+We will start out by using data assembled by the TidyTuesday project, but will eventually get to the raw data as well.
+
+The raw CSV data is available at https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-01-16/polling_places.csv
+
+```{r r-setup}
+# load any R packages you use in this chunk
+
+```
+
+```{python py-setup}
+# load any python packages you use in this chunk
+
+```
+
+# Data Input - Polling Places
+(30 pts)
+
+## Data File Inspection
+
+Here are the first six lines of the TidyTuesday CSV file:
+
+```         
+election_date,state,county_name,jurisdiction,jurisdiction_type,precinct_id,precinct_name,polling_place_id,location_type,name,address,notes,source,source_date,source_notes
+2020-11-03,AL,AUTAUGA,AUTAUGA,county,NA,AUTAUGAVILLE VOL FIRE DEPT,NA,election_day,AUTAUGAVILLE VOL FIRE DEPT,"2610 HIGHWAY 14 W, AUTAUGAVILLE, AL 36003",NA,ORR,2020-10-21,NA
+2020-11-03,AL,AUTAUGA,AUTAUGA,county,NA,BILLINGSLEY COMMUNITY CENTER,NA,election_day,BILLINGSLEY COMMUNITY CENTER,"2159 COUNTY RD 37, BILLINGSLEY, AL 36006",NA,ORR,2020-10-21,NA
+2020-11-03,AL,AUTAUGA,AUTAUGA,county,NA,BOONE'S CHAPEL,NA,election_day,BOONE'S CHAPEL,"2301 COUNTY RD 66, PRATTVILLE, AL 36067",NA,ORR,2020-10-21,NA
+2020-11-03,AL,AUTAUGA,AUTAUGA,county,NA,BOOTH VOL FIRE DEPT,NA,election_day,BOOTH VOL FIRE DEPT,"1701 COUNTY ROAD 10, BOOTH, AL 36008",NA,ORR,2020-10-21,NA
+2020-11-03,AL,AUTAUGA,AUTAUGA,county,NA,CAMELLIA BAPTIST CH,NA,election_day,CAMELLIA BAPTIST CH,"201 WOODVALE ROAD, PRATTVILLE, AL 36067",NA,ORR,2020-10-21,NA
+```
+
+1.  What is the file delimiter? (1 pt)    
+<Delete this and replace with your answer>
+
+2.  What is the header? (1 pt)    
+<Delete this and replace with your answer>
+
+3.  How many columns will the data have when it is read in using R or Python? (1 pt)    
+<Delete this and replace with your answer>
+
+4.  How is the data stored differently in the address field compared to the name field (1 pt), and why is this different handling necessary (1 pt)?    
+<Delete this and replace with your answer>
+
+## Reading the Data
+
+Read in the data in R (5 pts) and in python (5 pts).
+
+Make sure to load any packages which are necessary to run your code in the setup chunks at the beginning of the document.
+
+```{r r-read-data}
+
+```
+
+```{python py-read-data}
+
+```
+
+## Summarize the Data
+
+Using any method you choose from either language, fill in the following table.
+
+Language used: <Fill in>
+
+Make sure your terms match the language you're using and the code you provided above. If you use code to get these values (which is probably a good idea), please use the code chunks provided here:
+
+```{r r-data-summary-code}
+
+```
+
+```{python py-data-summary-code}
+
+```
+
+
+When computing the number of unique values, exclude missing values.
+
+| Column Name       | Data Type (5 pts) | # missing values (5 pts) | # unique values (5 pts) |
+|-------------|----------|-------------------------|-------------------------|
+| election_date     |           |                          |                                     |
+| state             |           |                          |                                     |
+| county_name       |           |                          |                                     |
+| jurisdiction      |           |                          |                                     |
+| jurisdiction_type |           |                          |                                     |
+| precinct_id       |           |                          |                                     |
+| precinct_name     |           |                          |                                     |
+| polling_place_id  |           |                          |                                     |
+| location_type     |           |                          |                                     |
+| name              |           |                          |                                     |
+| address           |           |                          |                                     |
+| notes             |           |                          |                                     |
+| source            |           |                          |                                     |
+| source_date       |           |                          |                                     |
+| source_notes      |           |                          |                                     |
+
+: Summary of Polling Data
+
+# Data Cleaning - Polling Places over Time
+(50 pts)
+
+For this part of the exam, you'll use your student ID to get the state you'll be working with. 
+```{r student-id-state-assign}
+my_nuid <- 96582245 # Change this value to your NUID
+state_ids <- readRDS("state-ids.RDS")
+my_state <- state_ids$state[my_nuid%%37]
+print(my_state)
+```
+
+Your end goal is to get a plot of the number of available polling places in each election, with separate lines for each jurisdiction (e.g. county) within your state. 
+
+## Steps
+(10 pts)
+
+Write out the steps (in plain language) required to get from the polling place data provided [here](https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-01-16/polling_places.csv) to the data you need to create your plot.
+Make sure to remove polling places which do not make sense - e.g. those with an address consisting of just the state name, or those named "DO NOT USE". 
+
+For each step, identify the data manipulation verb you will use, and any variables you will pass in as arguments. 
+Fill in the following table when you are finished. 
+Add new rows by moving to a new line, and separate each cell in the table with ` | ` (spaces matter). `|` is on the key above the enter key and shares a key with `\` (backslash). You will need to hold shift down.
+
+Step # | Verb | Arguments
+--- | --- | ---
+ 1 | ... | ... <!-- replace this line -->
+
+
+## Code
+(10 pts)
+
+Write code in R or python to execute the steps you outlined above.
+
+## Chart Description
+(7 pts)
+
+Use the grammar of graphics to identify the components of the chart here, which provides the data for Wisconsin.
+![Wisconsin counties where the number of polling places changed, 2012-2020](wisconsin-example.jpg){width="50%"}
+
+- geom: 
+- aesthetics: (list at least 3)
+
+  - 
+  - 
+  - 
+- coordinate system: 
+- y axis scale: 
+- x axis scale: 
+
+
+## Chart
+(20 pts)
+
+Write code in R or python to create a chart like that shown at the beginning of this example (5 pts). 
+Make sure your axes are labeled (5 pts) and your chart has a title (5 pts).
+Include your plot in this document and make sure you have a figure caption that describes what someone should notice in the chart (5 pts)
+You may do this either by modifying the chunk options or by using `include=F` and manually including the picture with a caption.
+
+## Modifications
+
+Evaluate the chart you created for comprehensibility and accessibility. (1 pt)
+
+What modifications might you add to this chart to make it clearer and more understandable? (2 pts)
+
+
+
+# Data Processing
+(20 pts)
+
+You want to mail a letter to every polling place in the state you were assigned. In order to do this, you need to separate out the pieces of the address: building number, street, city, state, and zip code. 
+Note that not all addresses will have all of these components - in Alaska, for example, there are often not street numbers or even names. 
+
+## Function Steps
+(5 pts)
+
+Use the following addresses to think through the steps you will need to accomplish this task.
+
+```
+Tatitlek, AK 99677
+First Street, Cordova, AK 99574
+105 ICE ST, MENASHA, WI 54952-3223
+1025 W 5TH AVE, OSHKOSH, WI 54902
+1702 COUNTY ROAD 40 W, PRATTVILLE, AL 36067
+5281 HIGHWAY 29, CORINTH VFD (PEROTE STATION), BANKS, AL 36005
+713 W. MOUNTAIN AVENUE, JACKSONVILLE, AL 36265
+COMMUNITY CENTER, 1168 HWY 84, SILAS, AL 36919
+```
+
+Write out the steps your function will need to accomplish in plain language.
+
+
+## Function Code - Single Address
+(5 pts)
+
+Write a function, `address_parser`, which can handle a single address and return a data structure containing each piece of the address, with NAs for pieces which are not matched.
+
+(change this chunk to python if you'd prefer to use python over R for this task)
+```{r single-address-parser}
+
+```
+
+
+This chunk will test your function on the addresses provided as examples. 
+(change this chunk to python if you used python above)
+```{r single-address-parser-test, error = T}
+address_parser("Tatitlek, AK 99677")
+address_parser("First Street, Cordova, AK 99574")
+address_parser("105 ICE ST, MENASHA, WI 54952-3223")
+address_parser("1025 W 5TH AVE, OSHKOSH, WI 54902")
+address_parser("1702 COUNTY ROAD 40 W, PRATTVILLE, AL 36067")
+address_parser("5281 HIGHWAY 29, CORINTH VFD (PEROTE STATION), BANKS, AL 36005")
+address_parser("713 W. MOUNTAIN AVENUE, JACKSONVILLE, AL 36265")
+address_parser("COMMUNITY CENTER, 1168 HWY 84, SILAS, AL 36919")
+```
+
+## Function Code - Vector
+(5 pts)
+
+Write a function, `address_vec`, which can parse a vector of addresses and return a data frame with columns corresponding to each piece of the address.
+
+(change this chunk to python if you'd prefer to use python over R for this task)
+```{r vector-address-parser}
+
+```
+
+
+This chunk will test your function on the addresses provided as examples. Delete whichever chunk corresponds to the language you didn't use. 
+```{r r-vector-address-parser-test, error = T}
+test_vec <- c("Tatitlek, AK 99677", "First Street, Cordova, AK 99574", "105 ICE ST, MENASHA, WI 54952-3223", "1025 W 5TH AVE, OSHKOSH, WI 54902", "1702 COUNTY ROAD 40 W, PRATTVILLE, AL 36067", "5281 HIGHWAY 29, CORINTH VFD (PEROTE STATION), BANKS, AL 36005", "713 W. MOUNTAIN AVENUE, JACKSONVILLE, AL 36265", "COMMUNITY CENTER, 1168 HWY 84, SILAS, AL 36919")
+address_vec(test_vec)
+```
+
+```{python py-vector-address-parser-test, error = T}
+test_vec = ["Tatitlek, AK 99677", "First Street, Cordova, AK 99574", "105 ICE ST, MENASHA, WI 54952-3223", "1025 W 5TH AVE, OSHKOSH, WI 54902", "1702 COUNTY ROAD 40 W, PRATTVILLE, AL 36067", "5281 HIGHWAY 29, CORINTH VFD (PEROTE STATION), BANKS, AL 36005", "713 W. MOUNTAIN AVENUE, JACKSONVILLE, AL 36265", "COMMUNITY CENTER, 1168 HWY 84, SILAS, AL 36919"]
+address_vec(test_vec)
+```
+
+## Function Evaluation
+
+Use your function to parse a vector of the unique polling place addresses in your state, creating a data table of address components for your letters.
+(5 pts)
+
+```{r r-function-eval}
+
+```
+
+Where did your function have issues, if it did? (5 pts)

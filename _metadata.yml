@@ -1,0 +1,3 @@
+type: exam
+image: ../figs/exam.svg
+engine: knitr
