@@ -11,17 +11,18 @@ categories:
 
 In this exam, you'll be using data collected about US polling places. The [Center for Public Integrity](https://publicintegrity.org/) assembled this data using open records requests and contact with state or county election officials. Full documentation is available on the [github repository for the data](https://github.com/PublicI/us-polling-places) - each state's details can be found in a README file for that state; there is also a machine-readable `manifest.yaml` file for each state provided.
 
-We will start out by using data assembled by the TidyTuesday project, but will eventually get to the raw data as well.
-
-The raw CSV data is available at https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-01-16/polling_places.csv
+The CSV data is available at https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-01-16/polling_places.csv
 
 ```{r r-setup}
-# load any R packages you use in this chunk
-
+# load R packages
+library(dplyr)
+library(stringr)
+library(ggplot2)
 ```
 
 ```{python py-setup}
-# load any python packages you use in this chunk
+# load python packages 
+import pandas as pd
 
 ```
 
@@ -42,16 +43,17 @@ election_date,state,county_name,jurisdiction,jurisdiction_type,precinct_id,preci
 ```
 
 1.  What is the file delimiter? (1 pt)    
-<Delete this and replace with your answer>
+The file delimiter is a comma (,).
 
 2.  What is the header? (1 pt)    
-<Delete this and replace with your answer>
+The header is the first row of the CSV file, which contains the column names.
 
 3.  How many columns will the data have when it is read in using R or Python? (1 pt)    
-<Delete this and replace with your answer>
+It is a 461445 row by 15 column data set. It as such has 15 columns.
 
 4.  How is the data stored differently in the address field compared to the name field (1 pt), and why is this different handling necessary (1 pt)?    
-<Delete this and replace with your answer>
+The data in the address field is stored as a  string, including street address, city, state, and ZIP code, while the data in the name field appears to be the name of the polling place. Thisis necessary because the address field requires somewhat more detailed information for geographical referencing and mapping purposes, while the name field is primarily for identifying the polling place without the need for said location information.
+
 
 ## Reading the Data
 
@@ -59,11 +61,12 @@ Read in the data in R (5 pts) and in python (5 pts).
 
 Make sure to load any packages which are necessary to run your code in the setup chunks at the beginning of the document.
 
-```{r r-read-data}
-
+```{r}
+polling_place <- read.csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-01-16/polling_places.csv")
 ```
 
-```{python py-read-data}
+```{python}
+polling_place = pd.read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-01-16/polling_places.csv")
 
 ```
 
@@ -71,17 +74,29 @@ Make sure to load any packages which are necessary to run your code in the setup
 
 Using any method you choose from either language, fill in the following table.
 
-Language used: <Fill in>
+Language used: R
 
 Make sure your terms match the language you're using and the code you provided above. If you use code to get these values (which is probably a good idea), please use the code chunks provided here:
 
-```{r r-data-summary-code}
+```{r}
+# Summary of the data
+summary_data <- polling_place %>%
+  summarize(
+    Total_rows = n(),
+    Unique_states = n_distinct(state),
+    Unique_counties = n_distinct(county_name),
+    Unique_jurisdictions = n_distinct(jurisdiction),
+    Unique_jurisdiction_types = n_distinct(jurisdiction_type),
+    Unique_location_types = n_distinct(location_type),
+    Avg_polling_places_per_jurisdiction = mean(table(jurisdiction)),
+    Avg_polling_places_per_county = mean(table(county_name)),
+    Avg_polling_places_per_state = mean(table(state))
+  )
+
+summary_data
 
 ```
 
-```{python py-data-summary-code}
-
-```
 
 
 When computing the number of unique values, exclude missing values.
@@ -111,7 +126,7 @@ When computing the number of unique values, exclude missing values.
 
 For this part of the exam, you'll use your student ID to get the state you'll be working with. 
 ```{r student-id-state-assign}
-my_nuid <- 96582245 # Change this value to your NUID
+my_nuid <- 09530026
 state_ids <- readRDS("state-ids.RDS")
 my_state <- state_ids$state[my_nuid%%37]
 print(my_state)
