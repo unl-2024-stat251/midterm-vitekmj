@@ -79,6 +79,8 @@ Language used: R
 Make sure your terms match the language you're using and the code you provided above. If you use code to get these values (which is probably a good idea), please use the code chunks provided here:
 
 ```{r}
+# DRAFT 1
+
 # Summary of the data
 summary_data <- polling_place %>%
   summarize(
@@ -96,9 +98,45 @@ summary_data <- polling_place %>%
 summary_data
 
 ```
+```{r}
+
+# DRAFT 2
+
+
+# data table
+summary_data <- polling_place %>%
+  summarize(
+    Total_rows = n(),
+    election_date = sum(!is.na(election_date)),
+    state = sum(!is.na(state)),
+    county_name = sum(!is.na(county_name)),
+    jurisdiction = sum(!is.na(jurisdiction)),
+    jurisdiction_type = sum(!is.na(jurisdiction_type)),
+    precinct_id = sum(!is.na(precinct_id)),
+    precinct_name = sum(!is.na(precinct_name)),
+    polling_place_id = sum(!is.na(polling_place_id)),
+    location_type = sum(!is.na(location_type)),
+    name = sum(!is.na(name)),
+    address = sum(!is.na(address)),
+    notes = sum(!is.na(notes)),
+    source = sum(!is.na(source)),
+    source_date = sum(!is.na(source_date)),
+    source_notes = sum(!is.na(source_notes)),
+    Unique_states = n_distinct(state, na.rm = TRUE),
+    Unique_counties = n_distinct(county_name, na.rm = TRUE),
+    Unique_jurisdictions = n_distinct(jurisdiction, na.rm = TRUE),
+    Unique_jurisdiction_types = n_distinct(jurisdiction_type, na.rm = TRUE),
+    Unique_location_types = n_distinct(location_type, na.rm = TRUE),
+    Avg_polling_places_per_jurisdiction = mean(table(jurisdiction, na.rm = TRUE)),
+    Avg_polling_places_per_county = mean(table(county_name, na.rm = TRUE)),
+    Avg_polling_places_per_state = mean(table(state, na.rm = TRUE))
+  )
+
+summary_data
 
 
 
+```
 When computing the number of unique values, exclude missing values.
 
 | Column Name       | Data Type (5 pts) | # missing values (5 pts) | # unique values (5 pts) |
