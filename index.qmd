@@ -77,31 +77,8 @@ Using any method you choose from either language, fill in the following table.
 Language used: R
 
 Make sure your terms match the language you're using and the code you provided above. If you use code to get these values (which is probably a good idea), please use the code chunks provided here:
-
 ```{r}
-# DRAFT 1
-
-# Summary of the data
-summary_data <- polling_place %>%
-  summarize(
-    Total_rows = n(),
-    Unique_states = n_distinct(state),
-    Unique_counties = n_distinct(county_name),
-    Unique_jurisdictions = n_distinct(jurisdiction),
-    Unique_jurisdiction_types = n_distinct(jurisdiction_type),
-    Unique_location_types = n_distinct(location_type),
-    Avg_polling_places_per_jurisdiction = mean(table(jurisdiction)),
-    Avg_polling_places_per_county = mean(table(county_name)),
-    Avg_polling_places_per_state = mean(table(state))
-  )
-
-summary_data
-
-```
-```{r}
-
-# DRAFT 2
-
+# DRAFT 3
 
 # data table
 summary_data <- polling_place %>%
@@ -132,32 +109,37 @@ summary_data <- polling_place %>%
     Avg_polling_places_per_state = mean(table(state, na.rm = TRUE))
   )
 
-summary_data
+summary_data <- as.data.frame(t(summary_data))
+names(summary_data) <- "Value"
 
+# Create the summary table
+summary_table <- data.frame(
+  Column_Name = c("election_date", "state", "county_name", "jurisdiction", "jurisdiction_type", 
+                  "precinct_id", "precinct_name", "polling_place_id", "location_type", 
+                  "name", "address", "notes", "source", "source_date", "source_notes"),
+  Data_Type = c(sapply(polling_place[, c("election_date", "state", "county_name", 
+                                         "jurisdiction", "jurisdiction_type",
+                                         "precinct_id", "precinct_name", 
+                                         "polling_place_id", "location_type", 
+                                         "name", "address", "notes", "source",
+                                         "source_date", "source_notes")], class)),
+  Num_Missing_Values = c(sapply(polling_place[, c("election_date", "state", 
+                                                  "county_name", "jurisdiction", 
+                                                  "jurisdiction_type", "precinct_id", 
+                                                  "precinct_name", "polling_place_id", 
+                                                  "location_type", "name", "address", 
+                                                  "notes", "source", "source_date", 
+                                                  "source_notes")], function(x) sum(is.na(x)))),
+  Num_Unique_Values = c(sapply(polling_place[, c("election_date", "state", 
+                                                 "county_name", "jurisdiction", 
+                                                 "jurisdiction_type", "precinct_id", 
+                                                 "precinct_name", "polling_place_id", 
+                                                 "location_type", "name", "address", 
+                                                 "notes", "source", "source_date", 
+                                                 "source_notes")], function(x) length(unique(x)))))
 
-
+summary_table
 ```
-When computing the number of unique values, exclude missing values.
-
-| Column Name       | Data Type (5 pts) | # missing values (5 pts) | # unique values (5 pts) |
-|-------------|----------|-------------------------|-------------------------|
-| election_date     |           |                          |                                     |
-| state             |           |                          |                                     |
-| county_name       |           |                          |                                     |
-| jurisdiction      |           |                          |                                     |
-| jurisdiction_type |           |                          |                                     |
-| precinct_id       |           |                          |                                     |
-| precinct_name     |           |                          |                                     |
-| polling_place_id  |           |                          |                                     |
-| location_type     |           |                          |                                     |
-| name              |           |                          |                                     |
-| address           |           |                          |                                     |
-| notes             |           |                          |                                     |
-| source            |           |                          |                                     |
-| source_date       |           |                          |                                     |
-| source_notes      |           |                          |                                     |
-
-: Summary of Polling Data
 
 # Data Cleaning - Polling Places over Time
 (50 pts)
@@ -170,7 +152,7 @@ my_state <- state_ids$state[my_nuid%%37]
 print(my_state)
 ```
 
-Your end goal is to get a plot of the number of available polling places in each election, with separate lines for each jurisdiction (e.g. county) within your state. 
+Your end goal is to get a plot of the number of available polling places in each election, with separate lines for each jurisdiction (e.g. county) within Iowa. 
 
 ## Steps
 (10 pts)
@@ -182,10 +164,15 @@ For each step, identify the data manipulation verb you will use, and any variabl
 Fill in the following table when you are finished. 
 Add new rows by moving to a new line, and separate each cell in the table with ` | ` (spaces matter). `|` is on the key above the enter key and shares a key with `\` (backslash). You will need to hold shift down.
 
+
+(I think)
+--- | --- | ---
 Step # | Verb | Arguments
 --- | --- | ---
- 1 | ... | ... <!-- replace this line -->
-
+1 | Filter | Remove polling places with addresses consisting of just the state name or named "DO NOT USE"
+2 | Filter | Select only the polling places located in Iowa
+3 | Group_by | Group the data by election date and jurisdiction (e.g., county)
+4 | Summarize | Count the number of polling places for each election date and jurisdiction
 
 ## Code
 (10 pts)
