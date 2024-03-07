@@ -23,7 +23,6 @@ library(ggplot2)
 ```{python py-setup}
 # load python packages 
 import pandas as pd
-
 ```
 
 # Data Input - Polling Places
@@ -67,7 +66,6 @@ polling_place <- read.csv("https://raw.githubusercontent.com/rfordatascience/tid
 
 ```{python}
 polling_place = pd.read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-01-16/polling_places.csv")
-
 ```
 
 ## Summarize the Data
@@ -177,7 +175,33 @@ Step # | Verb | Arguments
 ## Code
 (10 pts)
 
+```{r}
+# Group the data by election date, county, and polling place
+grouped_data <- iowa_data %>%
+  group_by(election_date, county_name) %>%
+  summarize(num_polling_places = n())
+
+# Print the table
+print(grouped_data)
+
+# Done to initilaize graph
+```
+
 Write code in R or python to execute the steps you outlined above.
+
+
+
+```{r}
+# Plot the number of polling places over time for each county in Iowa
+ggplot(grouped_data, aes(x = election_date, y = num_polling_places, group = county_name)) +
+  geom_line(size = 1) +
+  labs(title = "Number of Polling Places in Iowa by County Over Time",
+       x = "Election Date",
+       y = "Number of Polling Places",
+       ) +
+  theme_minimal()
+
+```
 
 ## Chart Description
 (7 pts)
@@ -185,15 +209,16 @@ Write code in R or python to execute the steps you outlined above.
 Use the grammar of graphics to identify the components of the chart here, which provides the data for Wisconsin.
 ![Wisconsin counties where the number of polling places changed, 2012-2020](wisconsin-example.jpg){width="50%"}
 
-- geom: 
+- geom: line segement
 - aesthetics: (list at least 3)
 
-  - 
-  - 
-  - 
+  - color/black&white
+  - lack of legend or text more generally about lines
+  - scale
+  
 - coordinate system: 
-- y axis scale: 
-- x axis scale: 
+- y axis scale: num of poll locs/county
+- x axis scale: date
 
 
 ## Chart
@@ -204,11 +229,25 @@ Make sure your axes are labeled (5 pts) and your chart has a title (5 pts).
 Include your plot in this document and make sure you have a figure caption that describes what someone should notice in the chart (5 pts)
 You may do this either by modifying the chunk options or by using `include=F` and manually including the picture with a caption.
 
+```{r}
+# Plot the number of polling places over time for each county in Iowa
+ggplot(grouped_data, aes(x = election_date, y = num_polling_places, group = county_name)) +
+  geom_line(size = 1) +
+  labs(title = "Number of Polling Places in Iowa by County Over Time",
+       x = "Election Date",
+       y = "Number of Polling Places",
+       caption = "Few counties have signficantly changed") +
+  theme_minimal()
+
+```
+
+
 ## Modifications
 
 Evaluate the chart you created for comprehensibility and accessibility. (1 pt)
-
 What modifications might you add to this chart to make it clearer and more understandable? (2 pts)
+
+The graph would likely be best served by enhanced legibility for the thick cluster art bottom of graph. As suggest by Dr VanderPlas a log version might be optimal.It also lacks a legend to see which line is which county. However it has a easily understandable scale indexed at 0. It also has a caption title and labels as appropiate. 
 
 
 
@@ -217,6 +256,50 @@ What modifications might you add to this chart to make it clearer and more under
 
 You want to mail a letter to every polling place in the state you were assigned. In order to do this, you need to separate out the pieces of the address: building number, street, city, state, and zip code. 
 Note that not all addresses will have all of these components - in Alaska, for example, there are often not street numbers or even names. 
+
+```{r}
+# Filter the polling place data to include only Iowa
+iowa_polling_places <- polling_place[polling_place$state == "IA", ]
+
+# Create functions to extract address components
+extract_building_number <- function(address) {
+  building_number <- gsub("([^0-9]+).*", "\\1", address)
+  return(building_number)
+}
+
+extract_street <- function(address) {
+  street <- gsub("([0-9]+\\s+)(.*)", "\\2", address)
+  return(street)
+}
+
+extract_city <- function(address) {
+  city <- gsub(".*,\\s*([^,]+),.*", "\\1", address)
+  return(city)
+}
+
+extract_state <- function(address) {
+  state <- gsub(".*\\b([A-Z]{2})\\b.*", "\\1", address)
+  return(state)
+}
+
+extract_zip_code <- function(address) {
+  zip_code <- gsub(".*\\b([0-9]{5}(?:-[0-9]{4})?)\\b.*", "\\1", address)
+  return(zip_code)
+}
+
+# Apply the functions to the polling place data
+iowa_polling_places$building_number <- sapply(iowa_polling_places$address, function(x) ifelse(is.na(x), NA, extract_building_number(x)))
+iowa_polling_places$street <- sapply(iowa_polling_places$address, function(x) ifelse(is.na(x), NA, extract_street(x)))
+iowa_polling_places$city <- sapply(iowa_polling_places$address, function(x) ifelse(is.na(x), NA, extract_city(x)))
+iowa_polling_places$state <- sapply(iowa_polling_places$address, function(x) ifelse(is.na(x), NA, extract_state(x)))
+iowa_polling_places$zip_code <- sapply(iowa_polling_places$address, function(x) ifelse(is.na(x), NA, extract_zip_code(x)))
+
+# Print a few rows of the updated data as a table
+head(iowa_polling_places[, c("building_number", "street", "city", "state", "zip_code")])
+
+```
+
+
 
 ## Function Steps
 (5 pts)
