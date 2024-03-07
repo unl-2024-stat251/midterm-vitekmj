@@ -319,6 +319,11 @@ COMMUNITY CENTER, 1168 HWY 84, SILAS, AL 36919
 
 Write out the steps your function will need to accomplish in plain language.
 
+Identify the type of address: building number, street, city, state, and zip code. Plus merge it into one line
+For each component, determine if it exists in the address.
+Use code to extract component from the address string.
+Handle cases where certain components may not exist in the address (e.g., Alaska addresses without street numbers or names).
+Return a data structure containing each piece of the address, with NAs for pieces that are not matched.
 
 ## Function Code - Single Address
 (5 pts)
@@ -327,6 +332,23 @@ Write a function, `address_parser`, which can handle a single address and return
 
 (change this chunk to python if you'd prefer to use python over R for this task)
 ```{r single-address-parser}
+address_parser <- function(address) {
+  building_number <- gsub("([^0-9]+).*", "\\1", address)
+  street <- gsub("([0-9]+\\s+)?([^,]+).*", "\\2", address)
+  city <- gsub(".*,\\s*([^,]+),.*", "\\1", address)
+  state <- gsub(".*\\b([A-Z]{2})\\b.*", "\\1", address)
+  zip_code <- gsub(".*\\b([0-9]{5}(?:-[0-9]{4})?)\\b.*", "\\1", address)
+  
+  return(data.frame(
+    building_number = ifelse(nchar(building_number) > 0, building_number, NA),
+    street = ifelse(nchar(street) > 0, street, NA),
+    city = ifelse(nchar(city) > 0, city, NA),
+    state = ifelse(nchar(state) > 0, state, NA),
+    zip_code = ifelse(nchar(zip_code) > 0, zip_code, NA)
+  ))
+}
+
+address_parser("WH 1600 Pennsylvania Ave, WashDC MD, 20500")
 
 ```
 
@@ -351,7 +373,10 @@ Write a function, `address_vec`, which can parse a vector of addresses and retur
 
 (change this chunk to python if you'd prefer to use python over R for this task)
 ```{r vector-address-parser}
-
+address_vec <- function(addresses) {
+  parsed_addresses <- lapply(addresses, address_parser)
+  return(do.call(rbind, parsed_addresses))
+}
 ```
 
 
@@ -367,12 +392,20 @@ address_vec(test_vec)
 ```
 
 ## Function Evaluation
-
 Use your function to parse a vector of the unique polling place addresses in your state, creating a data table of address components for your letters.
 (5 pts)
 
 ```{r r-function-eval}
+# Filter the polling place data to include only addresses from Iowa
+iowa_polling_places <- polling_place[polling_place$state == my_state, ]
 
+# Extract address components using the address_vec function
+address_components <- address_vec(unique(iowa_polling_places$address))
+
+# Print the first few rows of the address components data frame
+head(address_components)
 ```
 
 Where did your function have issues, if it did? (5 pts)
+
+Function seems to be finite instead of looping to get all data but I am unsure of why thats the case. The data seems to have some sort of delimiter error but it still terminates at zipcode as is proper. The delimiter is especially tricky if there is missing data especially if there is no comma to indicate data is missing ie 1600 Pennsylvania Ave NewYorkCity 12345
